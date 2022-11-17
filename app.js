@@ -1,12 +1,33 @@
-const express=require('express');
+const express = require('express');
 require("dotenv").config();
-const app=express()
+const app = express()
+const morgan = require('morgan');
+const fileupeload = require('express-fileupload');
+const cookieparser = require('cookie-parser');
+const swaggerUi = require('swagger-ui-express');
+
+
+// swagger document
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger.yaml');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+//reguler middleware 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+//cokkies and files from middleware
+app.use(fileupeload());
+app.use(cookieparser());
+
+// morgen middleware
+app.use(morgan('tiny'));
 
 //import the all routers
-const home=require('./routes/home');
+const home = require('./routes/home');
 
-//configuration all the routes from middleware
-app.use("/api/v1",home);
+//routes from middleware
+app.use("/api/v1", home);
 
 //export the app js
-module.exports=app
+module.exports = app

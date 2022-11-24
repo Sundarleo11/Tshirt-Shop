@@ -4,8 +4,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
-
-const userSchema = new mongoose.Mongoose({
+//corrected object creation
+const userSchema = new mongoose.Schema({
 
     name: {
         type: String,
@@ -49,7 +49,7 @@ const userSchema = new mongoose.Mongoose({
 });
 
 // crypt the password 
-userSchema.pre('save', async function (next) {
+userSchema.pre("save", async function(next) {
 
     if (!this.isModified('password')) {
         return next();
@@ -58,9 +58,10 @@ userSchema.pre('save', async function (next) {
 });
 
 //validate password 
-userSchema.methods.isValidatePassword = async function (userpassword) {
+userSchema.methods.isValidatedPassword = async function (userpassword) {
     return await bcrypt.compare(userpassword, this.password);
 };
+
 
 //create and return jwt token
 userSchema.methods.getJwtToken = function () {
@@ -68,6 +69,7 @@ userSchema.methods.getJwtToken = function () {
         expiresIn: process.env.JWT_EXPIRY,
     });
 };
+
 
 // generate the forgot token
 userSchema.methods.getforgotpasswordToken = function () {

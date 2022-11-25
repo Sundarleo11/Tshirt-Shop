@@ -17,7 +17,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //cokkies and files from middleware
-app.use(fileupeload());
+app.use(fileupeload(
+    fileupeload({
+        useTempFiles:true,
+        tempFileDir:"/tmp",
+    })
+));
 app.use(cookieparser());
 
 // morgen middleware

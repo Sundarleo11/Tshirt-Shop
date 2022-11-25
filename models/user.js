@@ -15,8 +15,10 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, "provide the a email"],
-        validate: [validator.isEmail, "Please provide the correct format an email"],
-        unquie: true
+       // validate: [validator.isEmail, "Please provide the correct format an email"],
+      //  unquie: true
+      validate: [validator.isEmail, "Please enter email in correct format"],
+      unique: true,
     },
     password: {
         type: String,
@@ -31,11 +33,11 @@ const userSchema = new mongoose.Schema({
     photo: {
         id: {
             type: String,
-            required: true
+          //  required: true
         },
         secure_url: {
             type: String,
-            required: true
+           // required: true
 
         }
     },

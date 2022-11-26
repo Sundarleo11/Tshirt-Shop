@@ -4,6 +4,7 @@ const customeError = require('../utils/customeError');
 const cookieToken = require('../utils/cookieToken');
 const files = require('express-fileupload');
 const cloudinary = require('cloudinary');
+const user = require('../models/user');
 
 
 exports.signup = Bigpromise(async (req, res, next) => {
@@ -45,4 +46,22 @@ exports.signup = Bigpromise(async (req, res, next) => {
 
   cookieToken(user, res);
 
+})
+
+exports.login=Bigpromise(async(req,res,next)=>{
+
+  const {email, password}=req.body;
+  if(!email || !password){
+    return next(new customeError("Please provide your email and password", 400));
+  }
+
+  const user= await User.findOne({email}).select("+password");
+  const ispassword=await user.isValidatedPassword(password);
+
+
+  if(!user || !ispassword){
+    return next(new customeError("Please check your email and password", 400));
+  }
+
+  cookieToken(user, res);
 })

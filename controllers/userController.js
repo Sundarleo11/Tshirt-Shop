@@ -5,17 +5,16 @@ const cookieToken = require('../utils/cookieToken');
 const files = require('express-fileupload');
 const cloudinary = require('cloudinary');
 const user = require('../models/user');
-const mailHelper=require('../utils/mailhelp');
-
+const mailHelper = require('../utils/mailhelp');
+const crypto = require('crypto');
 
 exports.signup = Bigpromise(async (req, res, next) => {
-
-  const { email, name, password } = req.body;
 
 
   if (!req.files) {
     return next(new customeError("Photo is required for signup", 400));
   }
+  const { email, name, password } = req.body;
   //Modified
   if (!email || !name || !password) {
     //return res.send("email,name and password are required");
@@ -52,16 +51,23 @@ exports.signup = Bigpromise(async (req, res, next) => {
 exports.login = Bigpromise(async (req, res, next) => {
 
   const { email, password } = req.body;
+
   if (!email || !password) {
     return next(new customeError("Please provide your email and password", 400));
   }
 
   const user = await User.findOne({ email }).select("+password");
+
+
+  //identify bug
+  if (!user || !ispassword) {
+    return next(new customeError("Please check your email ", 400));
+  }
+
   const ispassword = await user.isValidatedPassword(password);
 
-
-  if (!user || !ispassword) {
-    return next(new customeError("Please check your email and password", 400));
+  if (!ispassword) {
+    return next(new customeError("Please check your password", 400));
   }
 
   cookieToken(user, res);
@@ -90,7 +96,8 @@ exports.forgotpassword = Bigpromise(async (req, res, next) => {
 
   const forgottoken = user.getforgotpasswordToken()
   await user.save({ validateBeforeSave: false });
-  const myurl = `${req.protocol}://${req.get("host")}/password/reset/${forgottoken}`;
+  const myurl = `${req.protocol}://${req.get("host")}/api/v1/password/reset/${forgottoken}`;
+  console.log(forgottoken);
 
   const message = `copy and past this url and hit enter /n/n, ${myurl}`;
 
@@ -106,11 +113,44 @@ exports.forgotpassword = Bigpromise(async (req, res, next) => {
       message: "Tshort shop website for password Reset an email"
     })
   } catch (error) {
-    user.forgotpassword = undefined,
-      user.forgottoken = undefined,
-      await user.save({ validateBeforeSave: false });
-    return next(new customeError(console.message, 500));
+    // corrected token
+    user.forgotPasswordToken = undefined;
+    user.forgotpasswordExpiry = undefined;
+    await user.save({ validateBeforeSave: false });
+    // await user.save({ validateBeforeSave: false });
+    return next(new customeError(error.message, 500));
   }
 
 
+})
+
+
+exports.passwordReset = Bigpromise(async (req, res, next) => {
+
+  const token = req.params.token;
+
+  const encrpToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  const user = await User.findOne({
+    encrpToken,
+    forgotPasswordExpiry: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new customeError("Token has expired or invalied token", 400));
+  }
+
+  if (req.body.password !== req.body.confirmPassword) {
+    return next(new customeError("Password is doesn't match, Please check", 400));
+  }
+
+  user.password = req.body.password;
+
+
+
+  user.forgotPasswordToken = undefined,
+    user.forgotPasswordExpiry = undefined,
+
+    await user.save();
+  cookieToken(user, res);
 })

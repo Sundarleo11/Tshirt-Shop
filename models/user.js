@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema({
         }
     },
     forgotPasswordToken: String,
-    forgotpasswordExpiry: Date,
+   // forgotPasswordExpiry: Date,
     CreatedAt: {
         type: Date,
         default: Date.now
@@ -85,6 +85,7 @@ userSchema.methods.getforgotpasswordToken = function () {
 
     //token taken time
     this.forgotpasswordExpiry = Date.now() + process.env.FTE;
+    
 
     return forgotToken;
 

@@ -60,7 +60,7 @@ exports.login = Bigpromise(async (req, res, next) => {
 
 
   //identify bug
-  if (!user ) {
+  if (!user) {
     return next(new customeError("Please check your email ", 400));
   }
 
@@ -157,11 +157,35 @@ exports.passwordReset = Bigpromise(async (req, res, next) => {
 
 exports.isLoggedInUser = Bigpromise(async (req, res, next) => {
 
-    const userdetails= await User.findOne(req.body.id);
-      return res.status(200).json({
-        success: true,
-        userdetails
+  const userdetails = await User.findOne(req.body.id);
+  return res.status(200).json({
+    success: true,
+    userdetails
 
-     })
+  })
 
 })
+
+exports.changingPassword = Bigpromise(async (req, res, next) => {
+
+  const userId = req.body.password;
+
+  const user = await User.findOne({ userId }).select("+password");
+
+  const isCorrectOldPassword = await user.isValidatedPassword(req.body.oldPassword);
+
+  if (!isCorrectOldPassword) {
+    return next(new customeError("Please check your Password while changing new Passwod", 400));
+  }
+
+  //Update the Password In DB
+  user.password = req.body.password;
+
+  await user.save();
+
+  cookieToken(user, res);
+
+})
+
+
+

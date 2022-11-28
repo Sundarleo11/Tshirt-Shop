@@ -60,7 +60,7 @@ exports.login = Bigpromise(async (req, res, next) => {
 
 
   //identify bug
-  if (!user || !ispassword) {
+  if (!user ) {
     return next(new customeError("Please check your email ", 400));
   }
 
@@ -153,4 +153,15 @@ exports.passwordReset = Bigpromise(async (req, res, next) => {
 
     await user.save();
   cookieToken(user, res);
+})
+
+exports.isLoggedInUser = Bigpromise(async (req, res, next) => {
+
+    const userdetails= await User.findOne(req.body.id);
+      return res.status(200).json({
+        success: true,
+        userdetails
+
+     })
+
 })

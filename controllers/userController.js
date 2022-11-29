@@ -124,7 +124,6 @@ exports.forgotpassword = Bigpromise(async (req, res, next) => {
 
 })
 
-
 exports.passwordReset = Bigpromise(async (req, res, next) => {
 
   const token = req.params.token;
@@ -186,6 +185,8 @@ exports.changingPassword = Bigpromise(async (req, res, next) => {
   cookieToken(user, res);
 
 })
+
+
 exports.updateUserDetails = Bigpromise(async (req, res, next) => {
 
   const newData = {
@@ -228,20 +229,23 @@ exports.updateUserDetails = Bigpromise(async (req, res, next) => {
 
 exports.AllAdminUser = Bigpromise(async (req, res, next) => {
 
-  const users =await User.find();
+  const users = await User.find();
 
   return res.status(200).json({
-    success:true,
+    success: true,
     users
   })
 
 })
+
+
 exports.AdminGetOneUser = Bigpromise(async (req, res, next) => {
 
-  const users =await User.findById(req.params.id);
+  const users = await User.findById(req.params.id);
+
 
   return res.status(200).json({
-    success:true,
+    success: true,
     users
   })
 
@@ -252,7 +256,7 @@ exports.AdminupdateOneUserDetails = Bigpromise(async (req, res, next) => {
   const newData = {
     name: req.body.name,
     email: req.body.email,
-    role:req.body.role
+    role: req.body.role
   }
 
   // update the data in user
@@ -268,12 +272,34 @@ exports.AdminupdateOneUserDetails = Bigpromise(async (req, res, next) => {
     user
   })
 })
+
+
+exports.AdminDeleteOneUserDetails = Bigpromise(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    return next(new customeError("No such User ID", 400));
+  }
+  const ImageId = user.photo.id;
+
+  await cloudinary.v2.uploader.destroy(ImageId);
+
+  //update the DB
+  await user.remove();
+  return res.status(200).json({
+    success: true,
+  })
+
+
+})
+
+
 exports.mangaerAllUser = Bigpromise(async (req, res, next) => {
 
-  const users =await User.find( {role:"user"});
+  const users = await User.find({ role: "user" });
 
   return res.status(200).json({
-    success:true,
+    success: true,
     users
   })
 

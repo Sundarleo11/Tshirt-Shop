@@ -13,7 +13,8 @@ const { user,
     AllAdminUser,
     mangaerAllUser,
     AdminGetOneUser,
-    AdminupdateOneUserDetails
+    AdminupdateOneUserDetails,
+    AdminDeleteOneUserDetails
 }
 
     = require("../controllers/userController");
@@ -32,6 +33,7 @@ router.route("/dashboraduserDetails/update").post(isLoggedIn, updateUserDetails)
 router.route("/admin/user").get(isLoggedIn, customRoles('Admin') ,AllAdminUser);
 router.route("/admin/user/:id").get(isLoggedIn, customRoles('Admin') ,AdminGetOneUser);
 router.route("/admin/user/:id").put(isLoggedIn, customRoles('Admin') ,AdminupdateOneUserDetails);
+router.route("/admin/user/:id").delete(isLoggedIn, customRoles('Admin') ,AdminDeleteOneUserDetails);
 
 //manager all user
 router.route("/mangaerAllUser/user").get(isLoggedIn, customRoles('manager') ,mangaerAllUser);

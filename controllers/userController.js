@@ -186,6 +186,45 @@ exports.changingPassword = Bigpromise(async (req, res, next) => {
   cookieToken(user, res);
 
 })
+exports.updateUserDetails = Bigpromise(async (req, res, next) => {
+
+  const newData = {
+    name: req.body.name,
+    email: req.body.email,
+  }
+
+  if (req.files) {
+    const user = await User.findById(req.user.id);
+    const ImageId = user.photo.id;
+
+    const resp = await cloudinary.v2.uploader.destroy(ImageId);
+
+    const result = await cloudinary.v2.uploader.upload(req.files.photo.tempFilePath, {
+      folder: "user",
+      with: 150,
+      crop: "scale",
+
+    });
+
+    newDatephoto = {
+      id: result.public_id,
+      secure_url: result.secure_url,
+    }
+  }
+
+  // update the data in user
+  const user = await User.findByIdAndUpdate(req.user.id, newData, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+  //await User.save();
+
+  return res.status(200).json({
+    success: true,
+    user
+  })
+})
 
 exports.AllAdminUser = Bigpromise(async (req, res, next) => {
 

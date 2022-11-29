@@ -9,6 +9,7 @@ const { user,
     passwordReset,
     isLoggedInUser,
     changingPassword,
+    updateUserDetails,
     AllAdminUser,
     mangaerAllUser,
     AdminGetOneUser
@@ -24,6 +25,7 @@ router.route("/forgotpassword").post(forgotpassword);
 router.route("/password/reset/:token").post(passwordReset);
 router.route("/dashborad").get(isLoggedIn, isLoggedInUser);
 router.route("/password/update").post(isLoggedIn, changingPassword);
+router.route("/dashboraduserDetails/update").post(isLoggedIn, updateUserDetails);
 
 //Admin routes
 router.route("/admin/user").get(isLoggedIn, customRoles('Admin') ,AllAdminUser);

@@ -1,18 +1,28 @@
 const Bigpromise = require('../middlewares/bigpromise');
 const customeError = require('../utils/customeError');
-const jwt=require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const user = require('../models/user');
 
 
-exports.isLoggedIn=Bigpromise(async(req,res,next)=>{
-    const token=req.cookies.token || req.header("Authorization").replace("Bearer ","");
+exports.isLoggedIn = Bigpromise(async (req, res, next) => {
+    const token = req.cookies.token || req.header("Authorization").replace("Bearer ", "");
 
-    if(!token){
+    if (!token) {
         return next(new customeError("Please login first to visits the application", 400));
     }
-      const decode=jwt.verify(token,process.env.JWT_SECRET);
-     req.user= await user.findById(decode.id);
+    const decode = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await user.findById(decode.id);
 
-     next();
+    next();
 
 })
+
+exports.customRoles = (...roles) => {
+
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return next(new customeError("You are not allowed for this application ", 403));
+        }
+        next();
+    }
+}

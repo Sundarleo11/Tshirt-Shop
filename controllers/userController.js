@@ -187,5 +187,15 @@ exports.changingPassword = Bigpromise(async (req, res, next) => {
 
 })
 
+exports.AllAdminUser = Bigpromise(async (req, res, next) => {
+
+  const users =await User.find();
+
+  return res.status(200).json({
+    success:true,
+    users
+  })
+
+})
 
 

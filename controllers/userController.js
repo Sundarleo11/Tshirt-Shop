@@ -197,6 +197,16 @@ exports.AllAdminUser = Bigpromise(async (req, res, next) => {
   })
 
 })
+exports.AdminGetOneUser = Bigpromise(async (req, res, next) => {
+
+  const users =await User.findById(req.params.id);
+
+  return res.status(200).json({
+    success:true,
+    users
+  })
+
+})
 exports.mangaerAllUser = Bigpromise(async (req, res, next) => {
 
   const users =await User.find( {role:"user"});

@@ -10,7 +10,8 @@ const { user,
     isLoggedInUser,
     changingPassword,
     AllAdminUser,
-    mangaerAllUser
+    mangaerAllUser,
+    AdminGetOneUser
 }
 
     = require("../controllers/userController");
@@ -26,6 +27,7 @@ router.route("/password/update").post(isLoggedIn, changingPassword);
 
 //Admin routes
 router.route("/admin/user").get(isLoggedIn, customRoles('Admin') ,AllAdminUser);
+router.route("/admin/user/:id").get(isLoggedIn, customRoles('Admin') ,AdminGetOneUser);
 
 //manager all user
 router.route("/mangaerAllUser/user").get(isLoggedIn, customRoles('manager') ,mangaerAllUser);

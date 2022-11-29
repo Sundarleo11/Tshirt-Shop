@@ -12,7 +12,8 @@ const { user,
     updateUserDetails,
     AllAdminUser,
     mangaerAllUser,
-    AdminGetOneUser
+    AdminGetOneUser,
+    AdminupdateOneUserDetails
 }
 
     = require("../controllers/userController");
@@ -30,6 +31,7 @@ router.route("/dashboraduserDetails/update").post(isLoggedIn, updateUserDetails)
 //Admin routes
 router.route("/admin/user").get(isLoggedIn, customRoles('Admin') ,AllAdminUser);
 router.route("/admin/user/:id").get(isLoggedIn, customRoles('Admin') ,AdminGetOneUser);
+router.route("/admin/user/:id").put(isLoggedIn, customRoles('Admin') ,AdminupdateOneUserDetails);
 
 //manager all user
 router.route("/mangaerAllUser/user").get(isLoggedIn, customRoles('manager') ,mangaerAllUser);

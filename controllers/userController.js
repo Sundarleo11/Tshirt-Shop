@@ -246,6 +246,28 @@ exports.AdminGetOneUser = Bigpromise(async (req, res, next) => {
   })
 
 })
+
+exports.AdminupdateOneUserDetails = Bigpromise(async (req, res, next) => {
+
+  const newData = {
+    name: req.body.name,
+    email: req.body.email,
+    role:req.body.role
+  }
+
+  // update the data in user
+  const user = await User.findByIdAndUpdate(req.params.id, newData, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+  //await User.save();
+
+  return res.status(200).json({
+    success: true,
+    user
+  })
+})
 exports.mangaerAllUser = Bigpromise(async (req, res, next) => {
 
   const users =await User.find( {role:"user"});

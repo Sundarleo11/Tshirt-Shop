@@ -37,10 +37,12 @@ app.use(morgan('tiny'));
 //import the all routers
 const home = require('./routes/home');
 const User = require('./routes/User');
+const product = require('./routes/product');
 
 //routes from middleware
 app.use("/api/v1", home);
 app.use("/api/v1", User);
+app.use("/api/v1", product);
 
 
 //test the image handler

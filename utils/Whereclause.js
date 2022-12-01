@@ -18,7 +18,17 @@ search()
     this.base=this.base.find({ ...searchkeyword})
     return this;
 }
-    
+    pager(resultperpage){
+        let currentPage=1
+        if(this.bigQ.page){
+            currentPage =this.bigQ.page;
+        }
+        //formula 
+        const skipVal=resultperpage * (currentPage -1);
+        
+        this.base=this.base.limit(resultperpage).skip(skipVal);
+        return this;
+    }
 
 }
 

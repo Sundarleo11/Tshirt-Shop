@@ -34,7 +34,6 @@ class WhereClause {
         this.base = this.base.find(jsonOfCopy)
     }
 
-
     pager(resultperpage) {
         let currentPage = 1
         if (this.bigQ.page) {
@@ -50,4 +49,4 @@ class WhereClause {
 }
 
 
-
+module.exports=WhereClause;

@@ -146,6 +146,26 @@ exports.AdminUpdateOneProduct=(async(req,res,next)=>{
   })
 })
 
+exports.AdminDeleteOneProduct=(async(req,res,next)=>{
+  
+  const Products = await Product.findById(req.params.id);
+
+  if(!Products){
+    return next(new customeError("Products is not there",401));
+  }
+
+  for (let index = 0; index <Products.photo.length; index++) {
+    const resp = await cloudinary.v2.uploader.destroy(Products.photo[index].id);
+    
+  }
+  await Products.remove();
+ 
+  return res.status(200).json({
+    success: true,
+    message:"successfully Delete the Product !"
+  })
+})
+
 exports.getAllproduct = (async (req, res, next) => {
   const resultperpage = 6;
 

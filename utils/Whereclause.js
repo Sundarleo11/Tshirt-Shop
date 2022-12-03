@@ -28,10 +28,11 @@ class WhereClause {
         delete copyQ["page"];
 
         let stringOfCopyQ = JSON.stringify(copyQ);
-        stringOfCopyQ = stringOfCopyQ.replace(/\b(gte|lte|gt|lt)\b/g(m) = `$${m}`);
+        stringOfCopyQ = stringOfCopyQ.replace(/\b(gte|lte|gt|lt)\b/g,(m) => `$${m}`)
 
         const jsonOfCopy = JSON.parse(stringOfCopyQ);
-        this.base = this.base.find(jsonOfCopy)
+        this.base = this.base.find(jsonOfCopy);
+        return this;
     }
 
     pager(resultperpage) {

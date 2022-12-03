@@ -59,17 +59,25 @@ exports.addproduct = (async (req, res, next) => {
 
 exports.getAllproduct = (async (req, res, next) => {
   const resultperpage = 6;
+
   const totalproductCount = await Product.countDocuments();
-  const product = new WhereClause(Product.find().req.query).search().filter();
+
+  const productObj = new WhereClause(Product.find(),req.query).search().filter();
+
+  const product=productObj.base;
+
   const filterproductCount = product.length;
-  product.pager(resultperpage);
-  product = await product.base;
+
+  productObj.pager(resultperpage);
+  
+  products = await productObj.base.clone();
 
 
   return res.status(200).json({
     success: true,
     totalproductCount,
-    product,
+    filterproductCount,
+    products,
 
 
   })

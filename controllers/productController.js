@@ -15,7 +15,7 @@ exports.product = bigpromise((req, res) => {
 });
 
 
-exports.addproduct = (async (req, res, next) => {
+exports.addproduct = bigpromise(async (req, res, next) => {
 
 
   const ImageArray = [];
@@ -90,7 +90,7 @@ exports.singleProducts = (async (req, res, next) => {
 
 })
 
-exports.AdminUpdateOneProduct=(async(req,res,next)=>{
+exports.AdminUpdateOneProduct=bigpromise(async(req,res,next)=>{
   
   const Products = await Product.findById(req.params.id);
 
@@ -166,7 +166,7 @@ exports.AdminDeleteOneProduct=(async(req,res,next)=>{
   })
 })
 
-exports.getAllproduct = (async (req, res, next) => {
+exports.getAllproduct = bigpromise(async (req, res, next) => {
   const resultperpage = 6;
 
   const totalproductCount = await Product.countDocuments();
@@ -195,3 +195,99 @@ exports.getAllproduct = (async (req, res, next) => {
 
 
 })
+
+exports.AddReview =bigpromise (async (req, res, next) => {
+  
+const {productId,comment,rating}=req.body;
+
+const review ={
+  user:req.body._id,
+  name:req.body.name,
+  rating:Number(rating),
+  comment
+}
+
+const product=Product.findById(productId)
+const AlreadyReview= product.reviews.find(
+  (rev)=rev.user.toString()=== req.user._id.toString()
+);
+
+if (AlreadyReview) {
+  product.reviews.forEach((review) => {
+    if (review.user.toString() === req.user._id.toString()) {
+      review.comment = comment;
+      review.rating = rating;
+    }
+  });
+} else {
+  product.reviews.push(review);
+  product.numberOfReviews = product.reviews.length;
+}
+
+// adjust ratings
+
+product.ratings =
+  product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+  product.reviews.length;
+
+//save
+
+await product.save({ validateBeforeSave: false });
+
+res.status(200).json({
+  success: true,
+});
+  
+
+
+
+
+
+})
+
+exports.deleteReview = bigpromise(async (req, res, next) => {
+  const { productId } = req.query;
+
+  const product = await Product.findById(productId);
+
+  const reviews = product.reviews.filter(
+    (rev) => rev.user.toString() === req.user._id.toString()
+  );
+
+  const numberOfReviews = reviews.length;
+
+  // adjust ratings
+
+  product.ratings =
+    product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+    product.reviews.length;
+
+  //update the product
+
+  await Product.findByIdAndUpdate(
+    productId,
+    {
+      reviews,
+      ratings,
+      numberOfReviews,
+    },
+    {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    }
+  );
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
+exports.getOnlyReviewsForOneProduct = bigpromise(async (req, res, next) => {
+  const product = await Product.findById(req.query.id);
+
+  res.status(200).json({
+    success: true,
+    reviews: product.reviews,
+  });
+});

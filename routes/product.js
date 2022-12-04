@@ -7,7 +7,10 @@ const {product,
     AdminGetAllProduct,
     singleProducts,
     AdminUpdateOneProduct,
-    AdminDeleteOneProduct
+    AdminDeleteOneProduct,
+    AddReview,
+    deleteReview,
+    getOnlyReviewsForOneProduct
 }=require('../controllers/productController');
 
 
@@ -17,6 +20,9 @@ router.route("/test").get(product);
 
 router.route("/Products").get(getAllproduct);
 router.route("/Products/:id").get(singleProducts);
+router.route("/review").put(isLoggedIn,AddReview);
+router.route("/review").delete(isLoggedIn,deleteReview);
+router.route("/reviews").get(isLoggedIn,getOnlyReviewsForOneProduct);
 
 // admin user
 router.route("/admin/product/add").post(isLoggedIn, customRoles('Admin') ,addproduct);

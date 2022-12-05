@@ -5,7 +5,6 @@ const Product = require('../models/product');
 const WhereClause = require('../utils/whereclause');
 
 
-
 exports.product = bigpromise((req, res) => {
 
   res.status(200).json({
@@ -57,7 +56,7 @@ exports.addproduct = bigpromise(async (req, res, next) => {
 
 })
 
-exports.AdminGetAllProduct = (async (req, res, next) => {
+exports.AdminGetAllProduct = bigpromise(async (req, res, next) => {
 
   const Products = await Product.find();
 
@@ -71,7 +70,7 @@ exports.AdminGetAllProduct = (async (req, res, next) => {
 
 })
 
-exports.singleProducts = (async (req, res, next) => {
+exports.singleProducts = bigpromise(async (req, res, next) => {
 
   const Products = await Product.findById(req.params.id);
 
@@ -146,7 +145,7 @@ exports.AdminUpdateOneProduct=bigpromise(async(req,res,next)=>{
   })
 })
 
-exports.AdminDeleteOneProduct=(async(req,res,next)=>{
+exports.AdminDeleteOneProduct=bigpromise(async(req,res,next)=>{
   
   const Products = await Product.findById(req.params.id);
 
@@ -208,8 +207,10 @@ const review ={
 }
 
 const product=Product.findById(productId)
-const AlreadyReview= product.reviews.find(
-  (rev)=rev.user.toString()=== req.user._id.toString()
+console.log(product);
+
+const AlreadyReview = product.reviews.find(
+  (rev) => rev.user.toString() === req.user._id.toString()
 );
 
 if (AlreadyReview) {

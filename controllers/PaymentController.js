@@ -24,3 +24,32 @@ exports.sendStripeKey = BigPromise(async (req, res, next) => {
       //you can optionally send id as well
     });
   });
+
+
+  exports.sendRazorpayKey = BigPromise(async (req, res, next) => {
+    res.status(200).json({
+      stripekey: process.env.RAZORPAY_API_KEY,
+    });
+  });
+  
+  exports.captureRazorpayPayment = BigPromise(async (req, res, next) => {
+    var instance = new Razorpay({
+      key_id: process.env.RAZORPAY_API_KEY,
+      key_secret: process.env.RAZORPAY_SECRET,
+    });
+  
+    var options = {
+      amount: req.body.amount, // amount in the smallest currency unit
+      currency: "INR",
+      receipt:"order_receipt_01" //if you want random you can use nao libery 
+    };
+
+    const myOrder = await instance.orders.create(options);
+  
+    res.staus(200).json({
+      success: true,
+      amount: req.body.amount,
+      order: myOrder,
+    });
+  });
+  

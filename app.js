@@ -38,11 +38,13 @@ app.use(morgan('tiny'));
 const home = require('./routes/home');
 const User = require('./routes/User');
 const product = require('./routes/product');
+const Payment = require('./routes/payment');
 
 //routes from middleware
 app.use("/api/v1", home);
 app.use("/api/v1", User);
 app.use("/api/v1", product);
+app.use("/api/v1", Payment);
 
 
 //test the image handler

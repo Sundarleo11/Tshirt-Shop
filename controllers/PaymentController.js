@@ -8,7 +8,7 @@ exports.sendStripeKey = BigPromise(async (req, res, next) => {
     });
   });
   
-  exports.captureStripePayment = BigPromise(async (req, res, next) => {
+exports.captureStripePayment = BigPromise(async (req, res, next) => {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: req.body.amount,
       currency: "inr",
@@ -26,13 +26,13 @@ exports.sendStripeKey = BigPromise(async (req, res, next) => {
   });
 
 
-  exports.sendRazorpayKey = BigPromise(async (req, res, next) => {
+exports.sendRazorpayKey = BigPromise(async (req, res, next) => {
     res.status(200).json({
       stripekey: process.env.RAZORPAY_API_KEY,
     });
   });
   
-  exports.captureRazorpayPayment = BigPromise(async (req, res, next) => {
+ exports.captureRazorpayPayment = BigPromise(async (req, res, next) => {
     var instance = new Razorpay({
       key_id: process.env.RAZORPAY_API_KEY,
       key_secret: process.env.RAZORPAY_SECRET,

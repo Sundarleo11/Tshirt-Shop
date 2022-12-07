@@ -39,12 +39,14 @@ const home = require('./routes/home');
 const User = require('./routes/User');
 const product = require('./routes/product');
 const Payment = require('./routes/payment');
+const order = require('./routes/Order');
 
 //routes from middleware
 app.use("/api/v1", home);
 app.use("/api/v1", User);
 app.use("/api/v1", product);
 app.use("/api/v1", Payment);
+app.use("/api/v1", order);
 
 
 //test the image handler
